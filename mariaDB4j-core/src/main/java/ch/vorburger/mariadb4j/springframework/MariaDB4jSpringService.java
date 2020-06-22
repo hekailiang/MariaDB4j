@@ -19,6 +19,7 @@
  */
 package ch.vorburger.mariadb4j.springframework;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.Lifecycle;
 import org.springframework.context.annotation.Configuration;
@@ -51,6 +52,7 @@ public class MariaDB4jSpringService extends MariaDB4jService implements Lifecycl
     public final static String BASE_DIR = "mariaDB4j.baseDir";
     public final static String LIB_DIR = "mariaDB4j.libDir";
     public final static String UNPACK = "mariaDB4j.unpack";
+    public final static String ARGS = "mariaDB4j.args";
 
     protected ManagedProcessException lastException;
 
@@ -88,6 +90,16 @@ public class MariaDB4jSpringService extends MariaDB4jService implements Lifecycl
     public void setDefaultIsUnpackingFromClasspath(Boolean unpack) {
         if (unpack != null)
             getConfiguration().setUnpackingFromClasspath(unpack);
+    }
+
+    @Value("${" + ARGS + ":#{null}}")
+    public void setDefaultIsUnpackingFromClasspath(String args) {
+        if (args != null) {
+            String[] extArgs = StringUtils.split(args, ";");
+            for (String extArg : extArgs) {
+                getConfiguration().addArg(extArg.trim());
+            }
+        }
     }
 
     @Override
